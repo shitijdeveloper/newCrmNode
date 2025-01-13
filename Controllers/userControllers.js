@@ -131,6 +131,26 @@ const deleteUser = async (req, res) => {
       res.status(500).json({ message: 'Server Error' });
   }
 };
+const updateStatus = async (req, res) => {
+  try {
+    const { userId, status } = req.body;  // Assuming the userId and status are in the request body
+
+    if (!userId || typeof status !== 'boolean') {
+      return res.status(400).json({ message: 'Invalid request. UserId and status are required.' });
+    }
+
+    const user = await User.findByIdAndUpdate(userId, { status }, { new: true });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.json({ message: 'User status updated successfully!', user });
+  } catch (error) {
+    console.error('Error updating status:', error);
+    res.status(500).json({ message: 'Server Error. Please try again later.' });
+  }
+};
 
 
 module.exports = {
@@ -140,5 +160,6 @@ module.exports = {
     getAllUsers,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    updateStatus
 };

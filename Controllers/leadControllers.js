@@ -1,12 +1,23 @@
 const Customer = require('../Models/Lead'); // Assuming Customer is defined in your models
 const express = require('express');
-
+const jwt = require('jsonwebtoken');
 // Route to create a new customer (lead)
 const customer = async (req, res) => {
   try {
-    const { name, email, mobileno, healthCondition, city, state, address, Zipcode } = req.body;
-    const createby = req.user?._id; // Assuming req.user contains the logged-in user's ID
-    
+    console.log("Request Body:", req.body); // Debug log for the request body
+
+    const { 
+      name, 
+      email, 
+      mobileno, 
+      healthCondition, 
+      city, 
+      state, 
+      address, 
+      Zipcode, 
+      createby // Expects this directly from the frontend
+    } = req.body;
+
     const newCustomer = new Customer({
       name,
       email,
@@ -16,15 +27,23 @@ const customer = async (req, res) => {
       state,
       address,
       Zipcode,
-      createby,
+      createby, // Set as provided in the request
     });
+
     await newCustomer.save();
-    res.status(201).json({ message: 'Customer created successfully!', data: newCustomer });
+
+    res.status(201).json({ 
+      message: 'Customer created successfully!', 
+      data: newCustomer 
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error creating customer:", error);
     res.status(500).json({ message: 'Server Error. Please try again later.' });
   }
 };
+
+
+
 
 // Route to fetch all leads (customers)
 const allLeads = async (req, res) => {
@@ -36,6 +55,8 @@ const allLeads = async (req, res) => {
     res.status(500).json({ message: 'Server Error' });
   }
 };
+// Assuming you are using Express and the User's ID is available
+
 
 // Route to fetch a lead by ID
 const leadId = async (req, res) => {
@@ -72,5 +93,5 @@ module.exports = {
   customer,
   allLeads,
   leadDelte,
-  leadId,  // Exporting leadId handler to be used in router
+  leadId, 
 };

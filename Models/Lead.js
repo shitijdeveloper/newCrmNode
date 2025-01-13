@@ -21,7 +21,7 @@ const customerSchema = new mongoose.Schema({
   canceled: { type: Boolean, default: false }, 
   createby: { 
     type: mongoose.Schema.Types.ObjectId, 
-    ref: 'users', 
+    ref: 'user', 
     default: null 
   }
 }, { timestamps: true });

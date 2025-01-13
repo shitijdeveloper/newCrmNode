@@ -8,7 +8,7 @@ const UserSchema = new mongoose.Schema({
   isApproved: { type: Boolean, default: false },
   role: { type: String, default: "user" },
   profileImg: { type: String, default: null },
-  status: { type: Number, default: 0 },
+  status: { type: Boolean, default: "true" },
   createdAt: { type: Date, default: Date.now }
 }, { timestamps: true });
 
