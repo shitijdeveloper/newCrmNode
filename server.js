@@ -10,14 +10,13 @@ const path=require("path")
 const multer=require('multer')
 const Lead=require('./Models/Lead')
 const User=require('./Models/User')
-app.options('*', cors()); 
 app.use('/images', cors(), express.static(path.join(__dirname, 'public/images')));
 app.use(cors());
 app.use(express.json());
 // MongoDB connection URI
-const mongoDBURI = 'mongodb+srv://shitijsharma707:a16qWREKlTYbvLYl@cluster0.qwcrf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/test';
+// const mongoDBURI = 'mongodb+srv://shitijsharma707:a16qWREKlTYbvLYl@cluster0.qwcrf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/test';
 // Connecting to MongoDB
-// const mongoDBURI="mongodb://localhost:27017/CRM"
+const mongoDBURI="mongodb://localhost:27017/CRM"
 mongoose.connect(mongoDBURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Successfully connected to the database');
@@ -51,15 +50,19 @@ app.put('/api/lead/:id', async (req, res) => {
 });
 app.get('/api/leadaaa', async (req, res) => {
   const { userId } = req.query;
-  console.log('User ID:', userId); // Check what userId is received
+  console.log('User ID:', userId); // Log received userId
   try {
-    const leads = await Lead.find({ userId });
+    // Change this to 'createby' since that is the field you're filtering by
+    const leads = await Lead.find({ createby: userId });
+    console.log('Leads found:', leads); // Log the result of the query
     res.json(leads);
   } catch (err) {
     console.error('Error fetching leads:', err);
     res.status(500).json({ message: "Error fetching leads" });
   }
 });
+
+
 
 // Routes
 app.get('/', (req, res) => {
