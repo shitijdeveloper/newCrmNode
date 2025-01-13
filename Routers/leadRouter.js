@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { customer, leadDelte, allLeads, leadId } = require('../Controllers/leadControllers'); // Ensure leadId is used here
+const { customer, leadDelte, allLeads, leadId, serachLeads } = require('../Controllers/leadControllers'); // Ensure leadId is used here
 
 // POST route to create a customer
 router.post('/customer', customer);
@@ -14,4 +14,5 @@ router.get('/lead', allLeads);
 // GET route to fetch a lead by ID
 router.get('/lead/:id', leadId);  // This should match the exported function name
 
+router.get('/leadserach', serachLeads);  // This should match the exported function name
 module.exports = router;
