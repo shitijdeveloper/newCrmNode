@@ -14,9 +14,9 @@ app.use('/images', cors(), express.static(path.join(__dirname, 'public/images'))
 app.use(cors());
 app.use(express.json());
 // MongoDB connection URI
-// const mongoDBURI = 'mongodb+srv://shitijsharma707:a16qWREKlTYbvLYl@cluster0.qwcrf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/test';
+const mongoDBURI = 'mongodb+srv://shitijsharma707:a16qWREKlTYbvLYl@cluster0.qwcrf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/test';
 // Connecting to MongoDB
-const mongoDBURI="mongodb://localhost:27017/CRM"
+// const mongoDBURI="mongodb://localhost:27017/CRM"
 mongoose.connect(mongoDBURI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Successfully connected to the database');
