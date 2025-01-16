@@ -4,15 +4,61 @@ const mongoose = require('mongoose');
 const app=express()
 const userRouters=require('./Routers/userRouters')
 const leadRouters=require('./Routers/leadRouter')
-const chatRouter=require('./Routers/chatRouters')
 const Customer=require('./Models/Lead')
 const path=require("path")
 const multer=require('multer')
 const Lead=require('./Models/Lead')
 const User=require('./Models/User')
+const comp=require('./Models/Customer')
 app.use('/images', cors(), express.static(path.join(__dirname, 'public/images')));
 app.use(cors());
 app.use(express.json());
+app.use(cors({
+  origin: 'http://localhost:3000', // Allow frontend to communicate
+  methods: 'GET,POST', // Allow only GET and POST methods
+}));
+app.post('/api/complaint', async (req, res) => {
+  try {
+    const { name, email, mobileno, complaint } = req.body;
+    if (!name || !email || !mobileno || !complaint) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+    const result = new comp({
+      name,
+      email,
+      mobileno,
+      complaint
+    });
+    await result.save();
+    res.status(201).json({ message: "Complaint submitted successfully!", data: result });
+  } catch (error) {
+    console.error("Error submitting complaint:", error);
+    res.status(500).json({ message: "Server Error. Please try again later." });
+  }
+});
+// Backend API (Node.js)
+app.get('/api/comp', async (req, res) => {
+  try {
+    const { page = 1, limit = 10 } = req.query; // Pagination parameters
+    const skip = (page - 1) * limit;
+
+    const complaints = await comp.find()
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const totalComplaints = await comp.countDocuments();
+
+    res.json({
+      complaints,
+      totalPages: Math.ceil(totalComplaints / limit),
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error fetching complaints" });
+  }
+});
+
+
 // MongoDB connection URI
 const mongoDBURI = 'mongodb+srv://shitijsharma707:a16qWREKlTYbvLYl@cluster0.qwcrf.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0/test';
 // Connecting to MongoDB
@@ -26,7 +72,6 @@ mongoose.connect(mongoDBURI, { useNewUrlParser: true, useUnifiedTopology: true }
 });
 app.use('/api',userRouters)
 app.use('/api',leadRouters)
-app.use('/api',chatRouter)
 app.put('/api/lead/:id', async (req, res) => {
   const { id } = req.params;
   const { status, action } = req.body;  // Include action to handle 'cancel' or 'accept'
@@ -61,6 +106,21 @@ app.get('/api/leadaaa', async (req, res) => {
     res.status(500).json({ message: "Error fetching leads" });
   }
 });
+app.get('/api/leadquery', async (req, res) => {
+  const { fromDate, toDate, userType, leadStatus } = req.query;
+  try {
+    let query = {};
+    if (fromDate) query.createdAt = { $gte: new Date(fromDate) };
+    if (toDate) query.createdAt = { ...query.createdAt, $lte: new Date(toDate) };
+    if (userType) query.userType = userType;
+    if (leadStatus) query.status = leadStatus;
+
+    const leads = await Lead.find(query); // Assuming Lead is your model
+    res.json({ leads });
+  } catch (error) {
+    res.status(500).send("Error fetching leads");
+  }
+});
 
 
 
@@ -81,7 +141,7 @@ const storage = multer.diskStorage({
 
 const uploadProfileImage = multer({ storage }).single("file");
 
-app.post("/upload-profile-image", uploadProfileImage, async (req, res) => {
+app.post("/api/upload-profile-image", uploadProfileImage, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
