@@ -7,7 +7,7 @@ const ComplaintSchema = new mongoose.Schema({
   complaint: { 
     type: String, 
     required: true, 
-    maxlength: 500 // Set your desired maximum length here
+    maxlength: 1000 // Increase the length to allow longer complaints
   },
 }, 
 { timestamps: true });
