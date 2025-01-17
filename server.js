@@ -14,7 +14,7 @@ app.use('/images', cors(), express.static(path.join(__dirname, 'public/images'))
 app.use(cors());
 app.use(express.json());
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow frontend to communicate
+  // origin: 'http://localhost:3000', // Allow frontend to communicate
   methods: 'GET,POST', // Allow only GET and POST methods
 }));
 app.post('/api/complaint', async (req, res) => {
